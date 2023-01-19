@@ -3,6 +3,12 @@ pub struct KvStore {
     map: HashMap<String, String>,
 }
 
+impl Default for KvStore {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl KvStore {
     pub fn new() -> Self {
         KvStore {

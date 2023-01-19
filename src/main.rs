@@ -22,7 +22,7 @@ struct Remove {
 enum Commands {
     Set(Set),
     Get(Get),
-    Rm(Remove)
+    Rm(Remove),
 }
 
 #[derive(Parser)]
@@ -37,17 +37,17 @@ fn main() {
     let cli = Cli::parse();
 
     match &cli.command {
-        Commands::Set(set_command) => {
+        Commands::Set(_set_command) => {
             eprintln!("unimplemented");
             exit(-1);
-        },
-        Commands::Get(get_command) => {
+        }
+        Commands::Get(_get_command) => {
             eprintln!("unimplemented");
             exit(-1);
-        },
-        Commands::Rm(rm_command) => {
+        }
+        Commands::Rm(_rm_command) => {
             eprintln!("unimplemented");
             exit(-1);
-        },
+        }
     }
 }
