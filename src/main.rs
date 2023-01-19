@@ -1,3 +1,5 @@
+use std::process::exit;
+
 use clap::{Args, Parser, Subcommand};
 
 #[derive(Args)]
@@ -36,10 +38,16 @@ fn main() {
 
     match &cli.command {
         Commands::Set(set_command) => {
-            println!("{:?}", set_command.key);
+            eprintln!("unimplemented");
+            exit(-1);
         },
-        other => {
-            
-        }
+        Commands::Get(get_command) => {
+            eprintln!("unimplemented");
+            exit(-1);
+        },
+        Commands::Rm(rm_command) => {
+            eprintln!("unimplemented");
+            exit(-1);
+        },
     }
 }
