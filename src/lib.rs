@@ -1,4 +1,8 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, path::Path};
+
+mod err;
+pub use err::{Result, KvsError};
+
 pub struct KvStore {
     map: HashMap<String, String>,
 }
@@ -16,20 +20,26 @@ impl KvStore {
         }
     }
 
-    pub fn set(&mut self, key: String, value: String) {
+    pub fn open(path: &Path) -> Result<Self> {
+        unimplemented!()
+    }
+
+    pub fn set(&mut self, key: String, value: String) -> Result<()> {
         self.map.insert(key, value);
+        Ok(())
     }
 
-    pub fn remove(&mut self, key: String) {
+    pub fn remove(&mut self, key: String) -> Result<()> {
         self.map.remove(&key);
+        Ok(())
     }
 
-    pub fn get(&self, key: String) -> Option<String> {
+    pub fn get(&self, key: String) -> Result<Option<String>>{
         if self.map.contains_key(&key) {
             let value = self.map.get(&key).unwrap();
-            Some((*value).clone())
+            Ok(Some((*value).clone()))
         } else {
-            None
+            Err(KvsError::KeyNotFound)
         }
     }
 }
