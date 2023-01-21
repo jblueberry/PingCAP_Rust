@@ -1,31 +1,31 @@
-use std::{collections::HashMap, path::Path};
+use std::{collections::HashMap, path::{Path, PathBuf}};
 
 mod err;
-pub use err::{Result, KvsError};
+use cli::Set;
+pub use err::{KvsError, Result};
+
+mod cli;
+pub use cli::{Cli, Commands};
 
 pub struct KvStore {
+    path: PathBuf,
     map: HashMap<String, String>,
 }
 
-impl Default for KvStore {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl KvStore {
-    pub fn new() -> Self {
-        KvStore {
-            map: HashMap::new(),
-        }
-    }
-
     pub fn open(path: &Path) -> Result<Self> {
-        unimplemented!()
+        // convert path reference to owned path
+        let path = path.to_owned();
+        Ok(KvStore {
+            path,
+            map: HashMap::new(),
+        })
     }
 
     pub fn set(&mut self, key: String, value: String) -> Result<()> {
-        self.map.insert(key, value);
+        self.map.insert(key.clone(), value.clone());
+        let set_log = Set::new(key, value);
+        let set_log_json = serde_json::to_string(&set_log)?;
         Ok(())
     }
 
@@ -34,7 +34,7 @@ impl KvStore {
         Ok(())
     }
 
-    pub fn get(&self, key: String) -> Result<Option<String>>{
+    pub fn get(&self, key: String) -> Result<Option<String>> {
         if self.map.contains_key(&key) {
             let value = self.map.get(&key).unwrap();
             Ok(Some((*value).clone()))
