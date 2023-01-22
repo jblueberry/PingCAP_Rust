@@ -2,10 +2,10 @@ use clap::{Args, Parser, Subcommand};
 use serde::{Serialize, Deserialize};
 
 #[derive(Args)]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Set {
-    key: String,
-    value: String,
+    pub key: String,
+    pub value: String,
 }
 
 // generate new method for Set
@@ -16,9 +16,9 @@ impl Set {
 }
 
 #[derive(Args)]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Get {
-    key: String,
+    pub key: String,
 }
 
 // generate new method for Get
@@ -29,9 +29,9 @@ impl Get {
 }
 
 #[derive(Args)]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Remove {
-    key: String,
+    pub key: String,
 }
 
 // generate new method for Remove
@@ -42,7 +42,7 @@ impl Remove {
 }
 
 #[derive(Subcommand)]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub enum Commands {
     Set(Set),
     Get(Get),

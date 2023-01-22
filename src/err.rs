@@ -1,11 +1,10 @@
 use failure::Fail;
-use std::io;
 
 #[derive(Fail, Debug)]
 pub enum KvsError {
     /// IO error.
     #[fail(display = "{}", _0)]
-    Io(#[cause] io::Error),
+    Io(#[cause] std::io::Error),
     /// Serialization or deserialization error.
     #[fail(display = "{}", _0)]
     Serde(#[cause] serde_json::Error),
@@ -18,15 +17,15 @@ pub enum KvsError {
     UnexpectedCommandType,
 }
 
-impl From<io::Error> for KvsError {
-    fn from(err: io::Error) -> Self {
-        KvsError::Io(err)
+impl From<serde_json::Error> for KvsError {
+    fn from(value: serde_json::Error) -> Self {
+        Self::Serde(value)
     }
 }
 
-impl From<serde_json::Error> for KvsError {
-    fn from(err: serde_json::Error) -> Self {
-        KvsError::Serde(err)
+impl From<std::io::Error> for KvsError {
+    fn from(value: std::io::Error) -> Self {
+        Self::Io(value)
     }
 }
 

@@ -2,6 +2,7 @@ use assert_cmd::prelude::*;
 use kvs::{KvStore, Result};
 use predicates::ord::eq;
 use predicates::str::{contains, is_empty, PredicateStrExt};
+use std::io::Read;
 use std::process::Command;
 use tempfile::TempDir;
 use walkdir::WalkDir;
@@ -61,6 +62,13 @@ fn cli_set() {
         .stdout(is_empty());
 }
 
+fn read_content(path: &str) -> String {
+    let mut content = String::new();
+    let mut file = std::fs::File::open(path).unwrap();
+    file.read_to_string(&mut content).unwrap();
+    content
+}
+
 #[test]
 fn cli_get_stored() -> Result<()> {
     let temp_dir = TempDir::new().expect("unable to create temporary working directory");
@@ -69,6 +77,11 @@ fn cli_get_stored() -> Result<()> {
     store.set("key1".to_owned(), "value1".to_owned())?;
     store.set("key2".to_owned(), "value2".to_owned())?;
     drop(store);
+
+    let dir_path = String::from(temp_dir.as_ref().to_str().unwrap());
+    let path = dir_path + "/log.log";
+    println!("now the content of {} is:\n{}", path, read_content(&path));
+
 
     Command::cargo_bin("kvs")
         .unwrap()
@@ -94,9 +107,13 @@ fn cli_get_stored() -> Result<()> {
 fn cli_rm_stored() -> Result<()> {
     let temp_dir = TempDir::new().expect("unable to create temporary working directory");
 
+    //print the path of temp_dir
+    println!("temp_dir: {:?}", temp_dir.path());
     let mut store = KvStore::open(temp_dir.path())?;
     store.set("key1".to_owned(), "value1".to_owned())?;
     drop(store);
+
+    println!("here");
 
     Command::cargo_bin("kvs")
         .unwrap()
