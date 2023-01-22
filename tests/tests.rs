@@ -243,10 +243,23 @@ fn get_non_existent_value() -> Result<()> {
     let mut store = KvStore::open(temp_dir.path())?;
 
     store.set("key1".to_owned(), "value1".to_owned())?;
+
+    println!("111");
+    let value = store.get("key2".to_owned())?;
+    match value {
+        Some(_) => panic!("should not get value"),
+        None => {
+            println!("the value of key2 is None")
+        }
+    }
     assert_eq!(store.get("key2".to_owned())?, None);
+
+    println!("222");
 
     // Open from disk again and check persistent data.
     drop(store);
+
+    println!("eee");
     let mut store = KvStore::open(temp_dir.path())?;
     assert_eq!(store.get("key2".to_owned())?, None);
 

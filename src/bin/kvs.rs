@@ -22,18 +22,15 @@ fn main() -> Result<()> {
             let value = store.get(_get_command.key);
             match value {
                 Ok(value) => {
-                    println!("{}", value.unwrap());
+                    match value {
+                        Some(value) => println!("{}", value),
+                        None => println!("Key not found"),
+                    }
                 }
-                Err(err) => match err {
-                    kvs::KvsError::KeyNotFound => {
-                        println!("Key not found");
-                        exit(0);
-                    }
-                    _ => {
-                        eprintln!("Error: {}", err);
-                        exit(1);
-                    }
-                },
+                Err(err) => {
+                    eprintln!("Error: {}", err);
+                    exit(1);
+                }
             }
             Ok(())
         }

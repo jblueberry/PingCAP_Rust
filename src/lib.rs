@@ -20,7 +20,7 @@ pub struct KvStore {
 
 impl KvStore {
     pub fn debug_print(&self) {
-        // eprintln!("map: {:?}", self.map);
+        eprintln!("map: {:?}", self.map);
     }
 
     pub fn new(file: File) -> Self {
@@ -105,9 +105,9 @@ impl KvStore {
 
     pub fn get(&mut self, key: String) -> Result<Option<String>> {
         // iterate the map
-        for (k, v) in &self.map {
-            eprintln!("{}: {}", k, v);
-        }
+        // for (k, v) in &self.map {
+        //     eprintln!("{}: {}", k, v);
+        // }
         if self.map.contains_key(&key) {
             let command = serialize::read_from_file(&mut self.file, self.map[&key])?;
             match command {
@@ -115,7 +115,7 @@ impl KvStore {
                 _ => Err(KvsError::KeyNotFound),
             }
         } else {
-            Err(KvsError::KeyNotFound)
+            Ok(None)
         }
     }
 }
