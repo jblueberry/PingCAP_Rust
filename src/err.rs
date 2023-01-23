@@ -15,6 +15,10 @@ pub enum KvsError {
     /// It indicated a corrupted log or a program bug.
     #[fail(display = "Unexpected command type")]
     UnexpectedCommandType,
+    #[fail(display = "Unknown engine")]
+    UnknownEngine,
+    #[fail(display = "{}", _0)]
+    IpAddr(#[cause] std::net::AddrParseError),
 }
 
 impl From<serde_json::Error> for KvsError {
@@ -26,6 +30,12 @@ impl From<serde_json::Error> for KvsError {
 impl From<std::io::Error> for KvsError {
     fn from(value: std::io::Error) -> Self {
         Self::Io(value)
+    }
+}
+
+impl From<std::net::AddrParseError> for KvsError {
+    fn from(value: std::net::AddrParseError) -> Self {
+        Self::IpAddr(value)
     }
 }
 
