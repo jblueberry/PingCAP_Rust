@@ -1,20 +1,21 @@
 use clap::Parser;
 use kvs::Result;
 use std::process::exit;
-// use src/cli.rs, here is src/bin/kvs.rs
-use kvs::{Cli, Commands};
+use kvs::KvsEngine;
+use kvs::{ClientCli, Commands};
 
 fn main() -> Result<()> {
     // get the current working directory
     let cwd = std::env::current_dir()?;
     // println!("current working directory: {}", cwd.display());
-    let cli = Cli::parse();
+    let cli = ClientCli::parse();
 
     let mut store = kvs::KvStore::open(cwd)?;
-    store.debug_print();
+    // store.debug_print();
 
     // print cli.command
     // println!("cli.command: {:?}", cli.command);
+    eprintln!("address: {}", cli.addr);
 
     match cli.command {
         Commands::Set(_set_command) => store.set(_set_command.key, _set_command.value),

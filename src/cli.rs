@@ -52,7 +52,19 @@ pub enum Commands {
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 #[command(propagate_version = true)]
-pub struct Cli {
+pub struct ClientCli {
+    #[arg(long, default_value_t = String::from("127.0.0.1:4000"))]
+    pub addr: String,
     #[command(subcommand)]
     pub command: Commands,
+}
+
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+#[command(propagate_version = true)]
+pub struct ServerCli {
+    #[arg(long, default_value_t = String::from("127.0.0.1:4000"))]
+    pub addr: String,
+    #[arg(long, default_value_t = String::from("kvs"))]
+    pub engine: String,
 }

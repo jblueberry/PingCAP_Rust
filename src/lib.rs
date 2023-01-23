@@ -1,11 +1,13 @@
 use std::{collections::HashMap, fs::File, io::BufRead, path::Path};
 
 mod err;
-use cli::Set;
 pub use err::{KvsError, Result};
 
 mod cli;
-pub use cli::{Cli, Commands};
+pub use cli::{ClientCli, Commands, ServerCli};
+
+mod engine;
+pub use engine::KvsEngine;
 
 mod serialize;
 
@@ -38,13 +40,17 @@ impl KvStore {
 
                 new_map.insert(key.clone(), pos);
             }
-            
+
             self.map = new_map;
             self.file = new_file;
             // delete the old file
             std::fs::remove_file(self.path.clone() + "/log.log").unwrap();
             // rename the new file
-            std::fs::rename(self.path.clone() + "/log_new.log", self.path.clone() + "/log.log").unwrap();
+            std::fs::rename(
+                self.path.clone() + "/log_new.log",
+                self.path.clone() + "/log.log",
+            )
+            .unwrap();
 
             self.log_size = size;
         }
@@ -89,7 +95,7 @@ impl KvStore {
             file,
             map: map,
             log_size: size,
-            path: dir_path
+            path: dir_path,
         }
     }
 
@@ -121,8 +127,10 @@ impl KvStore {
         // println!("11");
         Ok(Self::new(file, dir_path))
     }
+}
 
-    pub fn set(&mut self, key: String, value: String) -> Result<()> {
+impl KvsEngine for KvStore {
+    fn set(&mut self, key: String, value: String) -> Result<()> {
         let set_command = Commands::Set(cli::Set::new(key.clone(), value.clone()));
         self.map
             .insert(key, serialize::append_to_file(&mut self.file, set_command)?);
@@ -131,7 +139,7 @@ impl KvStore {
         Ok(())
     }
 
-    pub fn remove(&mut self, key: String) -> Result<()> {
+    fn remove(&mut self, key: String) -> Result<()> {
         eprintln!("remove called");
         if self.map.contains_key(&key) {
             let rm_command = Commands::Rm(cli::Remove::new(key.clone()));
@@ -145,7 +153,7 @@ impl KvStore {
         }
     }
 
-    pub fn get(&mut self, key: String) -> Result<Option<String>> {
+    fn get(&mut self, key: String) -> Result<Option<String>> {
         eprintln!("get called");
         if self.map.contains_key(&key) {
             let command = serialize::read_from_file(&mut self.file, self.map[&key])?;
